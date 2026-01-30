@@ -24,5 +24,6 @@ agent_executor = create_sql_agent(
     llm=llm,
     db=db,
     agent_type="openai-tools",
-    verbose=True
+    verbose=True,
+    handle_parsing_errors=True
 )

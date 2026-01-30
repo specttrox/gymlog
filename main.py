@@ -56,7 +56,7 @@ class PerguntaSchema(BaseModel):
 @app.post("/ask")
 def perguntar_ia(pergunta: PerguntaSchema):
     # manda a pergunta
-    resposta = agent_executor.invoke(pergunta.texto)
+    resposta = agent_executor.invoke({"input": pergunta.texto})
     
     # retorna resposta final
     return {"resposta": resposta["output"]}

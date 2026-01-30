@@ -2,8 +2,9 @@ import sqlite3
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List
+from ai_agent import agent_executor
 
-app = FastAPI(title="IronLog AI")
+app = FastAPI(title="gymlog")
 
 # define modelo de dados para resposta
 class WorkoutSchema(BaseModel):
@@ -29,7 +30,7 @@ def listar_treinos():
     treinos = cursor.fetchall()
     
     conn.close()
-    return treinos
+    return [dict(row) for row in treinos]
 
 # rota para buscar treino unico por id
 @app.get("/treinos/{treino_id}")
@@ -46,4 +47,16 @@ def pegar_treino_especifico(treino_id: int):
     if treino is None:
         return {"erro": "treino nao encontrado"}
     
-    return treino
+    return dict(treino)
+
+# Rota da IA
+class PerguntaSchema(BaseModel):
+    texto: str
+
+@app.post("/ask")
+def perguntar_ia(pergunta: PerguntaSchema):
+    # manda a pergunta
+    resposta = agent_executor.invoke(pergunta.texto)
+    
+    # retorna resposta final
+    return {"resposta": resposta["output"]}
